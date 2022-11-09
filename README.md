@@ -1,2 +1,3 @@
-# insurgrid-exercise
-Exercise for Insurgrid
+# InsurGrid Exercise
+
+Exercise for InsurGrid
