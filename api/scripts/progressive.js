@@ -39,13 +39,10 @@ exports.__esModule = true;
 var playwright = require("playwright");
 function progressive(url, username, password) {
     return __awaiter(this, void 0, void 0, function () {
-        var browser, page;
+        var browser, page, loginError, download;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    console.log("username ".concat(username));
-                    console.log("password ".concat(password));
-                    return [4 /*yield*/, playwright.chromium.launch({ headless: false })];
+                case 0: return [4 /*yield*/, playwright.chromium.launch({ headless: false })];
                 case 1:
                     browser = _a.sent();
                     return [4 /*yield*/, browser.newPage()];
@@ -54,11 +51,55 @@ function progressive(url, username, password) {
                     return [4 /*yield*/, page.goto(url)];
                 case 3:
                     _a.sent();
-                    return [4 /*yield*/, page.waitForTimeout(5000)];
+                    return [4 /*yield*/, page.waitForTimeout(3000)];
                 case 4:
                     _a.sent();
-                    return [4 /*yield*/, browser.close()];
+                    return [4 /*yield*/, page.fill("input[formcontrolname='userName']", username)];
                 case 5:
+                    _a.sent();
+                    return [4 /*yield*/, page.fill("input[formcontrolname='password']", password)];
+                case 6:
+                    _a.sent();
+                    return [4 /*yield*/, page.click("button[data-pgr-id='buttonSubmitLogin']")];
+                case 7:
+                    _a.sent();
+                    return [4 /*yield*/, page.$$(".errorLogin")];
+                case 8:
+                    loginError = _a.sent();
+                    if (!loginError) return [3 /*break*/, 10];
+                    return [4 /*yield*/, browser.close()];
+                case 9:
+                    _a.sent();
+                    return [2 /*return*/, loginError];
+                case 10: return [4 /*yield*/, page.waitForTimeout(15000)];
+                case 11:
+                    _a.sent();
+                    return [4 /*yield*/, page.click("a[data-pgr-id='lnkProof']")];
+                case 12:
+                    _a.sent();
+                    return [4 /*yield*/, page.waitForTimeout(2000)];
+                case 13:
+                    _a.sent();
+                    return [4 /*yield*/, page.click("h4>[data-pgr-id='lblProofOption2']")];
+                case 14:
+                    _a.sent();
+                    return [4 /*yield*/, page.waitForTimeout(1000)];
+                case 15:
+                    _a.sent();
+                    return [4 /*yield*/, Promise.all([
+                            page.waitForEvent("download"),
+                            page.click("div>[data-pgr-id='btnSaveModal']"),
+                        ])];
+                case 16:
+                    download = (_a.sent())[0];
+                    return [4 /*yield*/, download.saveAs("declaration-page.pdf")];
+                case 17:
+                    _a.sent();
+                    return [4 /*yield*/, page.waitForTimeout(1000)];
+                case 18:
+                    _a.sent();
+                    return [4 /*yield*/, browser.close()];
+                case 19:
                     _a.sent();
                     return [2 /*return*/];
             }

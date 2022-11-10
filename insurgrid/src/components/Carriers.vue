@@ -2,7 +2,7 @@
   <div class="carriers">
     <h1>Carriers</h1>
     <div v-for="carrier in carriers" v-bind:key="carrier.id">
-      <button @click="selectCarrier" :value="selectedCarrier">
+      <button @click="selectCarrier">
         {{ carrier.name }}
       </button>
     </div>
@@ -18,12 +18,12 @@ import { mapActions, mapState } from "vuex";
   methods: {
     ...mapActions("carriers", ["getCarriers", "updateCurrentCarrier"]),
     selectCarrier() {
-      this.updateCurrentCarrier(this.selectedCarrier);
+      this.updateCurrentCarrier(this.currentCarrier);
       this.$router.push("/carrier");
     },
   },
   computed: {
-    ...mapState("carriers", ["carriers"]),
+    ...mapState("carriers", ["carriers", "currentCarrier"]),
   },
   async created() {
     await this.getCarriers();

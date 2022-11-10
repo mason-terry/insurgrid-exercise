@@ -2,8 +2,8 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as cors from "cors";
 import { Logger } from "./logger/logger";
-import Routes from "./routes/routes";
 import progressive from "./scripts/progressive";
+import * as path from "path";
 
 class App {
   public express: express.Application;
@@ -28,23 +28,28 @@ class App {
   }
 
   private routes(): void {
-    this.express.get("/healthcheck", (req, res, next) => {
+    this.express.get("/healthcheck", (req, res) => {
       this.logger.info(req.url);
       res.send("I'm healthy!");
     });
 
-    // this.express.use("/api", Routes);
-
-    this.express.get("/api/carriers", (req, res, next) => {
+    this.express.get("/api/carriers", (req, res) => {
       this.logger.info(req.url);
       res.send([{ id: 1, name: "Progressive" }]);
     });
 
-    this.express.post("/api/carriers/:id/login", (req, res, next) => {
+    this.express.post("/api/carriers/:id/login", async (req, res) => {
       const { username, password, url } = req.body;
       this.logger.info(req.url);
-      progressive(url, username, password);
-      res.send("Success!");
+      const error = await progressive(url, username, password);
+      if (error) {
+        this.logger.error("Error logging in!");
+        res.status(400);
+      }
+      const options = {
+        root: path.join(__dirname),
+      };
+      res.sendFile("declaration-page.pdf", options);
     });
   }
 }
